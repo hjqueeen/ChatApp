@@ -33,11 +33,20 @@ const Chat = () => {
   };
 
   const renderChat = () => {
-    return chat.map(({ name, message }, index) => (
-      <li key={index}>
-        <ChatMsg side={'right'} messages={[`${message}`]} />
-      </li>
-    ));
+    return chat.map(({ name, message }, index) =>
+      name === state.name ? (
+        <li key={index}>
+          <ChatMsg side={'right'} messages={[`${message}`]} />
+        </li>
+      ) : (
+        <li key={index}>
+          <div className="chat-contents-message">
+            <span className="chat-partner">{name}</span>
+          </div>
+          <ChatMsg avatar={''} messages={[`${message}`]} />
+        </li>
+      )
+    );
   };
   //
 

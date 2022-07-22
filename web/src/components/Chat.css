@@ -21,6 +21,10 @@
   overflow-y: auto;
 }
 
+.chat-partner {
+  font-weight: 600;
+}
+
 .render-chat {
   list-style: none;
 }
