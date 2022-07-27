@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import './Chat.css';
-
 import { Box } from '@mui/material';
 import io from 'socket.io-client';
 import TextEditor1 from './TextEditor1';
+
+import './Chat.css';
 
 const Chat = () => {
   // const [state, setState] = useState({ message: '', name: '' });
