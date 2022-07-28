@@ -15,7 +15,7 @@ export const SOCKET_EVENT = {
 };
 
 export const makeMessage = (pongData) => {
-  const { prevNickname, nickname, content, type, time } = pongData;
+  const { nickname, content, type, time } = pongData;
 
   let nicknameLabel;
   let contentLabel = '';
@@ -25,10 +25,10 @@ export const makeMessage = (pongData) => {
       contentLabel = `${nickname} has joined the room.`;
       break;
     }
-    case SOCKET_EVENT.UPDATE_NICKNAME: {
-      contentLabel = `User's name has been changed.\n ${prevNickname} => ${nickname}.`;
-      break;
-    }
+    // case SOCKET_EVENT.UPDATE_NICKNAME: {
+    //   contentLabel = `User's name has been changed.\n ${prevNickname} => ${nickname}.`;
+    //   break;
+    // }
     case SOCKET_EVENT.SEND_MESSAGE: {
       contentLabel = content;
       nicknameLabel = nickname;

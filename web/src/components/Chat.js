@@ -1,52 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import { Box } from '@mui/material';
-import io from 'socket.io-client';
-import TextEditor1 from './TextEditor1';
+//socket.io
+import { SocketContext, SOCKET_EVENT, makeMessage } from '../service/socket';
 
-import './Chat.css';
+//react-draft-wysiwyg
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import draftToHtml from 'draftjs-to-html';
+import { EditorState, convertToRaw } from 'draft-js';
 
-const Chat = () => {
-  // const [state, setState] = useState({ message: '', name: '' });
-  const [chat, setChat] = useState([]);
+//Mui
+import { Box, IconButton } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import AddIcon from '@mui/icons-material/Add';
 
-  //react-quill WYSIWYG
-  const [htmlContent, setHtmlContent] = useState('');
-  const quillRef = useRef();
+//style
+import styles from './Chat.module.css';
+
+const Chat = ({ nickname }) => {
+  const [messages, setMessages] = useState([]);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   // send and receive message
-  const socketRef = useRef();
+  const socket = useContext(SocketContext);
 
-  useEffect(() => {
-    socketRef.current = io.connect('http://localhost:4000');
-    socketRef.current.on('message', ({ message }) => {
-      setChat([...chat, { message }]);
+  const onEditorStateChange = useCallback((newState) => {
+    setEditorState(newState);
+  }, []);
+
+  //convert entered message to html
+  const handleSendMesssage = () => {
+    const typedMessage = draftToHtml(
+      convertToRaw(editorState.getCurrentContent())
+    );
+    // console.log(typedMessage);
+
+    socket.emit(SOCKET_EVENT.SEND_MESSAGE, {
+      nickname,
+      content: typedMessage,
     });
-    return () => socketRef.current.disconnect();
-  }, [chat]);
-
-  // const onTextChange = (e) => {
-  //   setState({ ...state, [e.target.name]: e.target.value });
-  // };
-
-  const onMessageSubmit = (e) => {
-    e.preventDefault();
-    const message = htmlContent;
-    socketRef.current.emit('message', { message });
-    setHtmlContent('');
+    // setEditorState('');
   };
-
-  const renderChat = () => {
-    return chat.map(({ message }, index) => (
-      <li key={index}>
-        <div
-          dangerouslySetInnerHTML={{ __html: message }}
-          className="sent-message"
-        ></div>
-      </li>
-    ));
-  };
-  //
 
   //scroll to bottom  (ScrollintoView)
   const messagesEndRef = useRef();
@@ -55,40 +55,83 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
+  const handleReceiveMessage = useCallback((pongData) => {
+    const newMessage = makeMessage(pongData);
+    console.log(`pontData is ${pongData}`);
+    setMessages((messages) => [...messages, newMessage]);
     scrollToBottom();
-  }, [chat]);
+  }, []);
+
+  useEffect(() => {
+    socket.on(SOCKET_EVENT.RECEIVE_MESSAGE, handleReceiveMessage);
+
+    return () => {
+      socket.off(SOCKET_EVENT.RECEIVE_MESSAGE, handleReceiveMessage);
+    };
+  }, [socket, handleReceiveMessage]);
+
+  // const renderChat = (messages) => {
+  //   return messages.map((message, index) => (
+  //     <li key={index}>
+  //       <div className="message-nickname">{nickname}: </div>
+  //       <div>{content}</div>
+  //       <div className="time">{time}</div>
+  //     </li>
+  //   ));
+  // };
   //
 
   return (
-    <div className="background">
-      <Box className="chat">
-        <Box className="chat-header">HEADER</Box>
-        <Box className="chat-contents">
-          <ul className="render-chat">{renderChat()}</ul>
-
-          {/* scroll to bottom  (ScrollintoView) */}
-          <div ref={messagesEndRef}></div>
-        </Box>
-        <Box className="chat-footer">
-          <form className="chat-footer-input" onSubmit={onMessageSubmit}>
-            <div>
-              <TextEditor1
-                quillRef={quillRef}
-                htmlContent={htmlContent}
-                setHtmlContent={setHtmlContent}
-              />
-            </div>
-            <button
-              className="chat-footer-input-button"
-              // onClick={handleSubmit}
-            >
-              Send Message
-            </button>
-          </form>
-        </Box>
+    <Box className={styles.container}>
+      {/* header */}
+      <Box className={styles.headerContainer}>
+        <header className={styles.header}>
+          <IconButton>
+            <ChevronLeftIcon />
+          </IconButton>
+          <h2 className={styles.titleText}>Welcome to {nickname}.</h2>
+          <IconButton>
+            <AddIcon />
+          </IconButton>
+        </header>
       </Box>
-    </div>
+
+      {/* chat */}
+      <Box className={styles.messagesContainer}>
+        <ul className={styles.messagesWrapper}>
+          {/* {messages.map((message, index) => (
+            <li key={index}>
+              <div className="message-nickname">{nickname}: </div>
+              <div>{content}</div>
+              <div className="time">{time}</div>
+            </li>
+          ))} */}
+        </ul>
+
+        {/* scroll to bottom  (ScrollintoView) */}
+        <div ref={messagesEndRef}></div>
+      </Box>
+
+      {/* Editor */}
+      <Box className={styles.editor}>
+        <Editor
+          editorState={editorState}
+          wrapperClassName="demo-wrapper"
+          editorClassName="demo-editor"
+          onEditorStateChange={onEditorStateChange}
+        />
+        {/* <QuillEditor
+          quillRef={quillRef}
+          htmlContent={htmlContent}
+          setHtmlContent={setHtmlContent}
+        /> */}
+        <textarea
+          disabled
+          value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
+        />
+        <button onClick={handleSendMesssage}>send</button>
+      </Box>
+    </Box>
   );
 };
 

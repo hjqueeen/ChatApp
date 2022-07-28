@@ -1,0 +1,154 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+}
+
+.headerContainer {
+  background-color: #128c7e;
+}
+
+.header {
+  position: relative;
+  margin: 0 auto;
+  max-width: 720px;
+  display: flex;
+}
+
+/* .backButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  color: white;
+}
+
+.inviteButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  color: white;
+} */
+
+.titleText {
+  flex-grow: 1;
+  margin: 0;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 400;
+  color: white;
+}
+
+.messagesContainer {
+  flex-grow: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.messagesWrapper {
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+.editor {
+  margin: 0 auto;
+  padding: 10px 0;
+  max-width: 720px;
+  width: 95%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.editorLeft {
+  padding-right: 10px;
+  padding-bottom: 6px;
+}
+
+.editorRight {
+  width: 100%;
+  flex-direction: column;
+  border: 1px solid #adb5bd;
+  border-radius: 20px;
+}
+
+.field {
+  display: flex;
+  padding: 5px 11px 5px 0;
+  flex: 1;
+}
+
+.sendImageButton {
+  display: block;
+  padding: 0;
+  outline: none;
+  border: none;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  color: #495057;
+}
+
+.file {
+  display: none;
+}
+
+.imagePreview {
+  margin-top: 10px;
+  margin-left: 10px;
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 12px;
+}
+
+.input {
+  flex: 1;
+  outline: none;
+  padding: 0 10px;
+  border: none;
+  border-radius: 12px;
+}
+
+.input::placeholder {
+  color: #adb5bd;
+}
+
+.sendButton {
+  padding: 0;
+  outline: none;
+  border: none;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  color: #868e96;
+}
+
+.modal {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: 400px;
+  width: 90%;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.editor {
+  display: flex;
+}

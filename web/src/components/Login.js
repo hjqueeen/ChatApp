@@ -9,7 +9,8 @@ import styles from './Login.module.css';
 const APP_NAME = 'Pengueen Chat';
 const APP_DESCRIPTION =
   'The most advanced and beautiful chat application in the universe. ' +
-  'Everybody should be using this. Choose your name and start chatting now.';
+  'Everybody should be using this. Choose your nickname and start chatting now.';
+const NICKNAME_ERROR = 'Please choose a nickname to start.';
 
 // -------------------------------------
 // Component
@@ -25,10 +26,10 @@ const NicknameForm = ({ handleSubmitNickname }) => {
 
   const handleSubmit = useCallback(() => {
     handleSubmitNickname(nickname);
-    setNickname('');
+    // setNickname('');
 
     if (!nickname) {
-      setNicknameError('Please choose an ID to start.');
+      setNicknameError(NICKNAME_ERROR);
     }
   }, [handleSubmitNickname, nickname]);
 
@@ -45,25 +46,26 @@ const NicknameForm = ({ handleSubmitNickname }) => {
           <p className={styles.description}>{APP_DESCRIPTION}</p>
         </div>
         <div className={styles.bottom}>
-          <div className={styles.inputContainer}>
-            <input
-              className={styles.input}
-              id="user-name-input"
-              type="text"
-              placeholder="User Name"
-              value={nickname}
-              onChange={handleChangeNickname}
-              onPressEnter={handleSubmit}
-            />
-          </div>
-          <p className={styles.error}>{nicknameError}</p>
-          <button
-            type="submit"
-            className={styles.button}
-            onClick={handleSubmit}
-          >
-            Connect
-          </button>
+          <form>
+            <div className={styles.inputContainer}>
+              <input
+                className={styles.input}
+                id="user-name-input"
+                type="text"
+                placeholder="Nickname"
+                value={nickname}
+                onChange={handleChangeNickname}
+              />
+            </div>
+            <p className={styles.error}>{nicknameError}</p>
+            <button
+              type="submit"
+              className={styles.button}
+              onClick={handleSubmit}
+            >
+              Connect
+            </button>
+          </form>
         </div>
       </div>
     </div>

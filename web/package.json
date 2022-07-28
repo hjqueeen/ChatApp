@@ -29,7 +29,12 @@
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@material-ui/icons": "^4.11.3",
     "@mui/material": "^5.9.2",
-    "dayjs": "^1.11.4"
+    "dayjs": "^1.11.4",
+    "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
+    "react-draft-wysiwyg": "^1.15.0",
+    "react-mui-draft-wysiwyg": "^1.0.3"
   }
 }
