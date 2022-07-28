@@ -7,8 +7,8 @@ import Login from './components/Login';
 import './App.css';
 
 const App = () => {
-  const prevNickname = useRef(null);
-  const [nickname, setNickname] = useState('');
+  // const prevNickname = useRef(null);
+  const [userNickname, setUserNickname] = useState('');
 
   useEffect(() => {
     return () => {
@@ -23,30 +23,32 @@ const App = () => {
     //     nickname,
     //   });
     // } else {
-    socket.emit(SOCKET_EVENT.JOIN_ROOM, { nickname });
+    console.log(userNickname);
+
+    socket.emit(SOCKET_EVENT.JOIN_ROOM, { userNickname });
     // }
-  }, [nickname]);
+  }, [userNickname]);
 
   const handleSubmitNickname = useCallback(
     (newNickname) => {
-      prevNickname.current = nickname;
+      // prevNickname.current = userNickname;
 
-      if (newNickname === '') {
-        setNickname('');
-      } else {
-        setNickname(newNickname);
-      }
+      // if (newNickname === '') {
+      //   setUserNickname('');
+      // } else {
+      setUserNickname(newNickname);
+      // }
     },
-    [nickname]
+    [userNickname]
   );
 
   return (
     <SocketContext.Provider value={socket}>
       <div>
-        {!nickname ? (
+        {!userNickname ? (
           <Login handleSubmitNickname={handleSubmitNickname} />
         ) : (
-          <Chat nickname={nickname} />
+          <Chat nickname={userNickname} />
         )}
       </div>
     </SocketContext.Provider>

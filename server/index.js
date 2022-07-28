@@ -17,8 +17,8 @@ const SOCKET_EVENT = {
   RECEIVE: 'RECEIVE',
 };
 
-socketIo.on('connection', (socket) => {
-  console.log('연결되었습니다');
+socketIo.on('connection', function (socket) {
+  console.log('소켓이 연결되었습니다');
   console.log(`${colors.brightGreen('socket connection succeeded.')}`);
 
   const roomName = 'room 1';
@@ -48,11 +48,6 @@ socketIo.on('connection', (socket) => {
 
   socket.on('disconnect', (reason) => {
     console.log(`연결해제disconnect: ${reason}`);
-  });
-
-  // 다른데서 붙여온거- 현재 채팅나오는것
-  socket.on('message', ({ message }) => {
-    socketIo.emit('message', { message });
   });
 });
 

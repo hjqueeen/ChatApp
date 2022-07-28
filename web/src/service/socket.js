@@ -22,14 +22,16 @@ export const makeMessage = (pongData) => {
 
   switch (type) {
     case SOCKET_EVENT.JOIN_ROOM: {
+      console.log('방에 들어왔습니다');
       contentLabel = `${nickname} has joined the room.`;
       break;
     }
-    // case SOCKET_EVENT.UPDATE_NICKNAME: {
-    //   contentLabel = `User's name has been changed.\n ${prevNickname} => ${nickname}.`;
-    //   break;
-    // }
+    case SOCKET_EVENT.UPDATE_NICKNAME: {
+      contentLabel = `User's name has been changed.\n ${prevNickname} => ${nickname}.`;
+      break;
+    }
     case SOCKET_EVENT.SEND_MESSAGE: {
+      console.log('메시지를 보냈습니다');
       contentLabel = content;
       nicknameLabel = nickname;
       break;

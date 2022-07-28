@@ -8,7 +8,7 @@ import React, {
 
 //socket.io
 import io from 'socket.io-client';
-import { SocketContext, SOCKET_EVENT } from '../service/socket';
+import { SocketContext, SOCKET_EVENT, makeMessage } from '../service/socket';
 
 //react-draft-wysiwyg
 import { Editor } from 'react-draft-wysiwyg';
@@ -28,7 +28,7 @@ import styles from './Chat.module.css';
 
 const Chat = ({ nickname }) => {
   // const [state, setState] = useState({ message: '', name: '' });
-  const [chat, setChat] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   // react-quill WYSIWYG
@@ -39,13 +39,13 @@ const Chat = ({ nickname }) => {
   const socketRef = useRef();
   const socket = useContext(SocketContext);
 
-  useEffect(() => {
-    socketRef.current = io.connect('http://localhost:4000');
-    socketRef.current.on('message', ({ message }) => {
-      setChat([...chat, { message }]);
-    });
-    return () => socketRef.current.disconnect();
-  }, [chat]);
+  // useEffect(() => {
+  //   socketRef.current = io.connect('http://localhost:4000');
+  //   socketRef.current.on('message', ({ message }) => {
+  //     setChat([...chat, { message }]);
+  //   });
+  //   return () => socketRef.current.disconnect();
+  // }, [chat]);
 
   // const onTextChange = (e) => {
   //   setState({ ...state, [e.target.name]: e.target.value });
@@ -83,7 +83,7 @@ const Chat = ({ nickname }) => {
   );
 
   const renderChat = () => {
-    return chat.map(({ message }, index) => (
+    return messages.map(({ message }, index) => (
       <li key={index}>
         <div
           dangerouslySetInnerHTML={{ __html: message }}

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { socket, SocketContext, SOCKET_EVENT } from '../service/socket';
 
 import styles from './Login.module.css';
 
@@ -46,7 +47,7 @@ const NicknameForm = ({ handleSubmitNickname }) => {
           <p className={styles.description}>{APP_DESCRIPTION}</p>
         </div>
         <div className={styles.bottom}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className={styles.inputContainer}>
               <input
                 className={styles.input}
