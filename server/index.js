@@ -1,49 +1,24 @@
-const app = require('express')();
+const colors = require('colors/safe');
+
+const express = require('express');
+const app = express();
 const http = require('http').createServer(app);
-// const cors = require('cors');
+const cors = require('cors');
 const socketIo = require('socket.io')(http, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true,
   },
 });
 
-const colors = require('colors/safe');
-
-const SOCKET_EVENT = {
-  JOIN: 'JOIN_ROOM',
-  UPDATE_NICKNAME: 'UPDATE_NICKNAME',
-  SEND: 'SEND',
-  RECEIVE: 'RECEIVE',
-};
+// app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 socketIo.on('connection', function (socket) {
-  console.log('소켓이 연결되었습니다');
-  console.log(`${colors.brightGreen('socket connection succeeded.')}`);
+  console.log(`${colors.brightGreen('연결됨socket connection succeeded.')}`);
 
-  const roomName = 'room 1';
-
-  Object.keys(SOCKET_EVENT).forEach((typeKey) => {
-    const type = SOCKET_EVENT[typeKey];
-
-    socket.on(type, (requestData) => {
-      const firstVisit = type === SOCKET_EVENT.JOIN_ROOM;
-
-      if (firstVisit) {
-        socket.join(roomName);
-      }
-
-      const responseData = {
-        ...requestData,
-        type,
-        time: new Date(),
-      };
-      socketIo.to(roomName).emit(SOCKET_EVENT.RECEIVE_MESSAGE, responseData);
-      printLog(responseData);
-
-      // 서버는 이벤트를 받은 시각과 함께 데이터를 그대로 중계해주는 역할만 수행
-      // 프론트엔드에서 출력 메시지 값 등을 관리
-    });
+  socket.on('message', ({ name, message }) => {
+    console.log('메세지를 받았습니다');
+    socket.emit('message', { name, message });
   });
 
   socket.on('disconnect', (reason) => {

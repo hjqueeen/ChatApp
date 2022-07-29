@@ -5,9 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
-//socket.io
-import { SocketContext, SOCKET_EVENT, makeMessage } from '../service/socket';
+import io from 'socket.io-client';
 
 //react-draft-wysiwyg
 import { Editor } from 'react-draft-wysiwyg';
@@ -16,19 +14,43 @@ import draftToHtml from 'draftjs-to-html';
 import { EditorState, convertToRaw } from 'draft-js';
 
 //Mui
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, TextField } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AddIcon from '@mui/icons-material/Add';
 
 //style
 import styles from './Chat.module.css';
 
-const Chat = ({ nickname }) => {
+function Chat({ nickname }) {
   const [messages, setMessages] = useState([]);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
+  const [state, setState] = useState({ message: '', name: '' });
+  const [chat, setChat] = useState([]);
+
+  const socketRef = useRef();
+
+  useEffect(() => {
+    socketRef.current = io.connect('http://localhost:4000');
+    socketRef.current.on('message', ({ message }) => {
+      setChat([...chat, { message }]);
+    });
+    return () => socketRef.current.disconnect();
+  }, [chat]);
+
+  const onTextChange = (e) => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
+
+  const onMessageSubmit = (e) => {
+    const { message } = state;
+    socketRef.current.emit('message', { message });
+    e.preventDefault();
+    setState({ message: '' });
+    scrollToBottom();
+  };
+
   // send and receive message
-  const socket = useContext(SocketContext);
 
   const onEditorStateChange = useCallback((newState) => {
     setEditorState(newState);
@@ -39,12 +61,10 @@ const Chat = ({ nickname }) => {
     const typedMessage = draftToHtml(
       convertToRaw(editorState.getCurrentContent())
     );
-    // console.log(typedMessage);
-
-    socket.emit(SOCKET_EVENT.SEND_MESSAGE, {
-      nickname,
-      content: typedMessage,
-    });
+    // socket.emit(SOCKET_EVENT.SEND_MESSAGE, {
+    //   nickname,
+    //   content: typedMessage,
+    // });
     // setEditorState('');
   };
 
@@ -55,31 +75,16 @@ const Chat = ({ nickname }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleReceiveMessage = useCallback((pongData) => {
-    const newMessage = makeMessage(pongData);
-    console.log(`pontData is ${pongData}`);
-    setMessages((messages) => [...messages, newMessage]);
-    scrollToBottom();
-  }, []);
-
-  useEffect(() => {
-    socket.on(SOCKET_EVENT.RECEIVE_MESSAGE, handleReceiveMessage);
-
-    return () => {
-      socket.off(SOCKET_EVENT.RECEIVE_MESSAGE, handleReceiveMessage);
-    };
-  }, [socket, handleReceiveMessage]);
-
-  // const renderChat = (messages) => {
-  //   return messages.map((message, index) => (
-  //     <li key={index}>
-  //       <div className="message-nickname">{nickname}: </div>
-  //       <div>{content}</div>
-  //       <div className="time">{time}</div>
-  //     </li>
-  //   ));
-  // };
-  //
+  const renderChat = () => {
+    const userNickname = nickname;
+    return chat.map(({ name, message }, index) => (
+      <li key={index}>
+        <h3>
+          {userNickname}: <span>{message}</span>
+        </h3>
+      </li>
+    ));
+  };
 
   return (
     <Box className={styles.container}>
@@ -99,6 +104,7 @@ const Chat = ({ nickname }) => {
       {/* chat */}
       <Box className={styles.messagesContainer}>
         <ul className={styles.messagesWrapper}>
+          {renderChat()}
           {/* {messages.map((message, index) => (
             <li key={index}>
               <div className="message-nickname">{nickname}: </div>
@@ -107,7 +113,6 @@ const Chat = ({ nickname }) => {
             </li>
           ))} */}
         </ul>
-
         {/* scroll to bottom  (ScrollintoView) */}
         <div ref={messagesEndRef}></div>
       </Box>
@@ -131,8 +136,32 @@ const Chat = ({ nickname }) => {
         />
         <button onClick={handleSendMesssage}>send</button>
       </Box>
+      <div className="card">
+        <form onSubmit={onMessageSubmit}>
+          <h1>Messenger</h1>
+          <div className="name-field">
+            <TextField
+              name="name"
+              onChange={(e) => onTextChange(e)}
+              value={state.name}
+              label="Name"
+            />
+          </div>
+          <div>
+            <TextField
+              name="message"
+              onChange={(e) => onTextChange(e)}
+              value={state.message}
+              id="outlined-multiline-static"
+              variant="outlined"
+              label="Message"
+            />
+          </div>
+          <button>Send Message</button>
+        </form>
+      </div>
     </Box>
   );
-};
+}
 
 export default Chat;

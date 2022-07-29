@@ -8,8 +8,8 @@ export const socket = socketIo('http://localhost:4000', {
 export const SocketContext = createContext(socket);
 
 export const SOCKET_EVENT = {
-  JOIN_ROOM: 'JOIN_ROOM',
-  UPDATE_NICKNAME: 'UPDATE_NICKNAME',
+  // JOIN_ROOM: 'JOIN_ROOM',
+  // UPDATE_NICKNAME: 'UPDATE_NICKNAME',
   SEND_MESSAGE: 'SEND_MESSAGE',
   RECEIVE_MESSAGE: 'RECEIVE_MESSAGE',
 };
@@ -21,15 +21,15 @@ export const makeMessage = (pongData) => {
   let contentLabel = '';
 
   switch (type) {
-    case SOCKET_EVENT.JOIN_ROOM: {
-      console.log('방에 들어왔습니다');
-      contentLabel = `${nickname} has joined the room.`;
-      break;
-    }
-    case SOCKET_EVENT.UPDATE_NICKNAME: {
-      contentLabel = `User's name has been changed.\n ${prevNickname} => ${nickname}.`;
-      break;
-    }
+    // case SOCKET_EVENT.JOIN_ROOM: {
+    //   console.log('방에 들어왔습니다');
+    //   contentLabel = `${nickname} has joined the room.`;
+    //   break;
+    // }
+    // case SOCKET_EVENT.UPDATE_NICKNAME: {
+    //   contentLabel = `User's name has been changed.\n ${prevNickname} => ${nickname}.`;
+    //   break;
+    // }
     case SOCKET_EVENT.SEND_MESSAGE: {
       console.log('메시지를 보냈습니다');
       contentLabel = content;

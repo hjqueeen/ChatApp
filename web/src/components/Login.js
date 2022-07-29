@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { socket, SocketContext, SOCKET_EVENT } from '../service/socket';
+// import { socket, SocketContext, SOCKET_EVENT } from '../service/socket';
 
 import styles from './Login.module.css';
 
@@ -17,7 +17,7 @@ const NICKNAME_ERROR = 'Please choose a nickname to start.';
 // Component
 // -------------------------------------
 
-const NicknameForm = ({ handleSubmitNickname }) => {
+const Login = ({ handleSubmitNickname }) => {
   const [nickname, setNickname] = useState('');
   const [nicknameError, setNicknameError] = useState('');
 
@@ -73,4 +73,4 @@ const NicknameForm = ({ handleSubmitNickname }) => {
   );
 };
 
-export default NicknameForm;
+export default Login;
