@@ -61,6 +61,7 @@
 .messagesWrapper {
   margin: 0 auto;
   max-width: 720px;
+  list-style: none;
 }
 
 /* .editor {
@@ -71,6 +72,36 @@
   display: flex;
   align-items: flex-end;
 } */
+
+.message {
+  display: flex;
+  vertical-align: top;
+}
+
+.messageContent {
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  margin-left: 20px;
+  padding: 0px 20px;
+  background: #dbfac6;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 8px;
+}
+
+.messageContent::after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 0px 20px 20px 0;
+  border-color: transparent #dbfac6;
+  display: block;
+  width: 0;
+  z-index: 1;
+  left: -12px;
+  top: 0px;
+}
 
 .editorLeft {
   padding-right: 10px;
