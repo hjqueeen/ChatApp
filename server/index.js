@@ -11,18 +11,21 @@ const socketIo = require('socket.io')(http, {
   },
 });
 
-// app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-
 socketIo.on('connection', function (socket) {
-  console.log(`${colors.brightGreen('연결됨socket connection succeeded.')}`);
+  console.log(`${colors.brightGreen('socket connection succeeded.')}`);
 
-  socket.on('message', ({ name, message }) => {
-    console.log('메세지를 받았습니다');
-    socket.emit('message', { name, message });
+  socket.on('sendMessage', (messagePackage) => {
+    console.log('got a message');
+    socket.emit('receivedMessage', messagePackage);
+  });
+
+  socket.on('joinRoom', () => {
+    console.log('Enter chat room 1');
+    socket.join('room 1');
   });
 
   socket.on('disconnect', (reason) => {
-    console.log(`연결해제disconnect: ${reason}`);
+    console.log(`socket disconnect: ${reason}`);
   });
 });
 

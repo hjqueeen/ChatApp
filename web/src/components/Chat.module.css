@@ -16,32 +16,6 @@
   display: flex;
 }
 
-/* .backButton {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50px;
-  height: 50px;
-  outline: none;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  color: white;
-}
-
-.inviteButton {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50px;
-  height: 50px;
-  outline: none;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  color: white;
-} */
-
 .titleText {
   flex-grow: 1;
   margin: 0;
@@ -54,14 +28,14 @@
 
 .messagesContainer {
   flex-grow: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; */
 }
 
 .messagesWrapper {
   margin: 0 auto;
   max-width: 720px;
   list-style: none;
+  overflow-y: auto;
 }
 
 /* .editor {
@@ -156,30 +130,32 @@
   color: #adb5bd;
 }
 
-.sendButton {
-  padding: 0;
-  outline: none;
-  border: none;
-  width: 24px;
-  height: 24px;
-  background-color: transparent;
-  color: #868e96;
-}
-
-.modal {
-  position: fixed;
-  top: 60px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  max-width: 400px;
-  width: 90%;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  overflow: hidden;
-}
-
 .editor {
   display: flex;
+  justify-content: center;
+}
+
+.draftWrapper {
+  padding: 0;
+  border: 1px solid #ccc;
+  max-width: 720px;
+}
+
+.draftToolbar {
+  border: none;
+  outline: none;
+}
+
+.draftEditor {
+  background-color: #ddd;
+  padding: 1rem;
+  border: none;
+  height: auto;
+}
+.sendButton {
+  padding: 5;
+  border: 1px solid #ccc;
+
+  background-color: transparent;
+  color: #43474b;
 }

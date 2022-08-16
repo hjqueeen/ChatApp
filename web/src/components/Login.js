@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import io from 'socket.io-client';
 // import { socket, SocketContext, SOCKET_EVENT } from '../service/socket';
 
 import styles from './Login.module.css';
@@ -21,17 +22,22 @@ const Login = ({ handleSubmitNickname }) => {
   const [nickname, setNickname] = useState('');
   const [nicknameError, setNicknameError] = useState('');
 
+  const socketRef = useRef();
+
   const handleChangeNickname = useCallback((event) => {
     setNickname(event.target.value);
   }, []);
 
   const handleSubmit = useCallback(() => {
     handleSubmitNickname(nickname);
-    // setNickname('');
+    socketRef.current = io.connect('http://localhost:4000');
+    socketRef.current.emit('joinRoom', nickname);
 
     if (!nickname) {
       setNicknameError(NICKNAME_ERROR);
     }
+
+    return () => socketRef.current.disconnect();
   }, [handleSubmitNickname, nickname]);
 
   return (
