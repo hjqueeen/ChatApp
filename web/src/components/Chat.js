@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
+// import { socket, SocketContext, SOCKET_EVENT } from "src/service/socket";
 
 //react-draft-wysiwyg
 import { Editor } from 'react-draft-wysiwyg';
@@ -16,25 +17,21 @@ import AddIcon from '@mui/icons-material/Add';
 import styles from './Chat.module.css';
 
 function Chat({ nickname }) {
-  // const [messages, setMessages] = useState([]);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
-  // const [state, setState] = useState({ message: '', name: '' });
   const [chat, setChat] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState([]);
 
   const socketRef = useRef();
 
   useEffect(() => {
     socketRef.current = io.connect('http://localhost:4000');
-    socketRef.current.on('message', (messagePackage) => {
+    socketRef.current.on('receivedMessage', (messagePackage) => {
+      console.log('Message List');
       setChat([...chat, messagePackage]);
+      console.log(chat);
     });
     return () => socketRef.current.disconnect();
   }, [chat]);
-
-  const onEditorStateChange = useCallback((editorState) => {
-    setEditorState(editorState);
-  }, []);
 
   //convert entered message to html
   const handleSendMesssage = useCallback(() => {
@@ -47,10 +44,11 @@ function Chat({ nickname }) {
         message: typedMessage,
       };
 
-      socketRef.current.emit('message', messagePackage);
+      socketRef.current.emit('sendMessage', messagePackage);
 
       setEditorState(EditorState.createEmpty());
       scrollToBottom();
+    } else {
     }
   }, [editorState, nickname]);
 
@@ -62,9 +60,8 @@ function Chat({ nickname }) {
   };
 
   const renderChat = () => {
-    // const userNickname = nickname;
-    return chat.map(({ name, message }) => (
-      <div className={styles.message}>
+    return chat.map(({ name, message }, index) => (
+      <div className={styles.message} key={index}>
         <div className={styles.messageName}>{name}</div>
         <div className={styles.messageContent}>
           <div
@@ -75,6 +72,23 @@ function Chat({ nickname }) {
         </div>
       </div>
     ));
+  };
+
+  const uploadImageCallBack = (file) => {
+    // let uploadedImages = this.state.uploadedImages;
+
+    const imageObject = {
+      file: file,
+      localSrc: URL.createObjectURL(file),
+    };
+
+    uploadedImages.push(imageObject);
+
+    setUploadedImages(uploadedImages);
+
+    return new Promise((resolve, reject) => {
+      resolve({ data: { link: imageObject.localSrc } });
+    });
   };
 
   return (
@@ -103,11 +117,34 @@ function Chat({ nickname }) {
       <Box className={styles.editor}>
         <Editor
           editorState={editorState}
-          wrapperClassName="demo-wrapper"
-          editorClassName="demo-editor"
-          onEditorStateChange={onEditorStateChange}
+          editorStyle={{ overflow: 'hidden' }}
+          wrapperClassName={styles.draftWrapper}
+          editorClassName={styles.draftEditor}
+          toolbarClassName={styles.draftToolbar}
+          onEditorStateChange={(editorState) => {
+            setEditorState(editorState);
+          }}
+          toolbar={{
+            inline: {
+              options: ['bold', 'italic', 'underline', 'strikethrough'],
+            },
+            list: { options: ['unordered', 'ordered'] },
+            blockType: {
+              inDropdown: true,
+              options: ['Normal', 'H1', 'H2', 'H3'],
+            },
+            textAlign: { inDropdown: true },
+            link: { inDropdown: true },
+            history: { inDropdown: false },
+            image: {
+              uploadCallback: uploadImageCallBack,
+              alt: { present: true, mandatory: true },
+            },
+          }}
         />
-        <button onClick={handleSendMesssage}>send</button>
+        <button className={styles.sendButton} onClick={handleSendMesssage}>
+          send
+        </button>
       </Box>
     </Box>
   );
