@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
-// import { socket, SocketContext, SOCKET_EVENT } from "src/service/socket";
 
 //react-draft-wysiwyg
 import { Editor } from 'react-draft-wysiwyg';
@@ -75,8 +74,6 @@ function Chat({ nickname }) {
   };
 
   const uploadImageCallBack = (file) => {
-    // let uploadedImages = this.state.uploadedImages;
-
     const imageObject = {
       file: file,
       localSrc: URL.createObjectURL(file),
