@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, getDefaultKeyBinding } from 'draft-js';
 
 //Mui
 import { Box, IconButton } from '@mui/material';
@@ -19,6 +19,7 @@ function Chat({ nickname }) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [chat, setChat] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [editorFocused, setEditorFocused] = useState(false);
 
   const socketRef = useRef();
 
@@ -73,6 +74,31 @@ function Chat({ nickname }) {
     ));
   };
 
+  // const onEditorFocus = event => {
+  //   const { onFocus } = this.props;
+  //   setEditorFocused(true);
+
+  //   const editFocused = this.focusHandler.isEditorFocused();
+  //   if (onFocus && editFocused) {
+  //     onFocus(event);
+  //   }
+  // };
+
+  const myKeyBindingFn = (e) => {
+    if (e.keyCode === 13 /* `enter` key */) {
+      return 'myeditor-save';
+    }
+    return getDefaultKeyBinding(e);
+  };
+
+  const handleKeyCommand = (command, editorState) => {
+    if (command === 'myeditor-save') {
+      handleSendMesssage();
+      return 'handled';
+    }
+    return 'not-handled';
+  };
+
   const uploadImageCallBack = (file) => {
     const imageObject = {
       file: file,
@@ -96,7 +122,7 @@ function Chat({ nickname }) {
           <IconButton>
             <ChevronLeftIcon />
           </IconButton>
-          <h2 className={styles.titleText}>Welcome to {nickname}.</h2>
+          <h2 className={styles.titleText}>Welcome to {nickname}</h2>
           <IconButton>
             <AddIcon />
           </IconButton>
@@ -111,13 +137,19 @@ function Chat({ nickname }) {
       </Box>
 
       {/* Editor */}
-      <Box className={styles.editor}>
+      <Box
+        className={styles.editor}
+        //  onFocus={onEditorFocus}
+        // onBlur={onEditorBlur}
+      >
         <Editor
           editorState={editorState}
           editorStyle={{ overflow: 'hidden' }}
           wrapperClassName={styles.draftWrapper}
           editorClassName={styles.draftEditor}
           toolbarClassName={styles.draftToolbar}
+          handleKeyCommand={handleKeyCommand}
+          keyBindingFn={myKeyBindingFn}
           onEditorStateChange={(editorState) => {
             setEditorState(editorState);
           }}
